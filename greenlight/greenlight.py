@@ -4,7 +4,7 @@ Greenlight takes an endpoint and either a http code and/or a response text eleme
 """
 
 __author__ = "Joseph Ryan-Palmer"
-__version__ = "0.1.5"
+__version__ = "0.1.10"
 __license__ = "MIT"
 
 import argparse
@@ -80,24 +80,7 @@ def header_format(headers):
     return outputheaders
 
 
-def main(args):
-    print("Greenlight v{}".format(__version__))
-
-    headers = {}
-
-    if args.headers:
-        headers = header_format(args.headers)
-
-    try:
-        with timeout(args.timeout*60, exception=TimeoutError):
-            caller(urlbuilder(args.endpoint, args.port, args.ssl), args.rc,
-                   args.rtext, headers)
-    except TimeoutError:
-        print("Greenlight timed out")
-
-
-if __name__ == "__main__":
-    """ This is executed when run from the command line """
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--timeout", type=int,
@@ -131,4 +114,19 @@ if __name__ == "__main__":
         parser.error(
             'Please specify one or both of --rc or --rtext')
 
-    main(args)
+    headers = {}
+
+    if args.headers:
+        headers = header_format(args.headers)
+
+    try:
+        with timeout(args.timeout*60, exception=TimeoutError):
+            caller(urlbuilder(args.endpoint, args.port, args.ssl), args.rc,
+                   args.rtext, headers)
+    except TimeoutError:
+        print("Greenlight timed out")
+
+
+if __name__ == '__main__':
+    """ This is executed when run from the command line """
+    main()

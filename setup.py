@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="greenlight",
-    version="0.1.5",
+    version="0.1.10",
     author="Joseph Ryan-Palmer",
     author_email="joseph@ryan-palmer.com",
     description="A small application to poll for response code or text",
@@ -15,8 +15,8 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "greenlight"},
-    packages=setuptools.find_packages(where="greenlight"),
+    package_dir={"greenlight": "greenlight"},
+    packages=["greenlight"],
     python_requires=">=3.6",
     entry_points={
         "console_scripts": ["greenlight=greenlight.greenlight:main"]
