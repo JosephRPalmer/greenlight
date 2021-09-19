@@ -1,24 +1,24 @@
 import setuptools
 
 setuptools.setup(
-    name="greenlight",
-    version="0.1.10",
+    name="signalman",
+    version="0.1.11",
     author="Joseph Ryan-Palmer",
     author_email="joseph@ryan-palmer.com",
     description="A small application to poll for response code or text",
-    url="https://github.com/JosephRPalmer/greenlight",
+    url="https://github.com/JosephRPalmer/signalman",
     project_urls={
-        "Bug Tracker": "https://github.com/JosephRPalmer/greenlight/issues",
+        "Bug Tracker": "https://github.com/JosephRPalmer/signalman/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"greenlight": "greenlight"},
-    packages=["greenlight"],
+    package_dir={"signalman": "signalman"},
+    packages=["signalman"],
     python_requires=">=3.6",
     entry_points={
-        "console_scripts": ["greenlight=greenlight.greenlight:main"]
+        "console_scripts": ["signalman=signalman.signalman:main"]
     },
 )

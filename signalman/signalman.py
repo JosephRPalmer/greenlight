@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Greenlight takes an endpoint and either a http code and/or a response text element and continues running until a timeout elapses (with error 1) or the conditions are met (exit code 0)
+signalman takes an endpoint and either a http code and/or a response text element and continues running until a timeout elapses (with error 1) or the conditions are met (exit code 0)
 """
 
 __author__ = "Joseph Ryan-Palmer"
-__version__ = "0.1.10"
+__version__ = "0.1.11"
 __license__ = "MIT"
 
 import argparse
@@ -84,17 +84,17 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--timeout", type=int,
-                        help='Set timeout for Greenlight to run in minutes', required=True)
+                        help='Set timeout for signalman to run in minutes', required=True)
 
     parser.add_argument("--endpoint", type=str,
                         help='Endpoint to poll', required=True)
     parser.add_argument("--port", type=int, help='Port to poll', required=True)
 
     parser.add_argument(
-        "--rc", type=str, help='Set a return code for Greenlight to look for')
+        "--rc", type=str, help='Set a return code for signalman to look for')
 
     parser.add_argument("--rtext", type=str,
-                        help='Set a return string for Greenlight to look for')
+                        help='Set a return string for signalman to look for')
 
     parser.add_argument("--headers", type=str, nargs='+',
                         help='Set request headers to use, for example to request Content-Type: application/json use h.content-type:application/json')
@@ -124,7 +124,7 @@ def main():
             caller(urlbuilder(args.endpoint, args.port, args.ssl), args.rc,
                    args.rtext, headers)
     except TimeoutError:
-        print("Greenlight timed out")
+        print("signalman timed out")
 
 
 if __name__ == '__main__':
