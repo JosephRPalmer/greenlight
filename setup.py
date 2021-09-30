@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="signalman",
-    version="0.1.11",
+    version="0.1.12",
     author="Joseph Ryan-Palmer",
     author_email="joseph@ryan-palmer.com",
     description="A small application to poll for response code or text",
@@ -18,6 +18,11 @@ setuptools.setup(
     package_dir={"signalman": "signalman"},
     packages=["signalman"],
     python_requires=">=3.6",
+    install_requires=[
+        'requests',
+        'interruptingcow',
+        'retrying',
+    ],
     entry_points={
         "console_scripts": ["signalman=signalman.signalman:main"]
     },

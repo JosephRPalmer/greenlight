@@ -4,7 +4,7 @@ signalman takes an endpoint and either a http code and/or a response text elemen
 """
 
 __author__ = "Joseph Ryan-Palmer"
-__version__ = "0.1.11"
+__version__ = "0.1.12"
 __license__ = "MIT"
 
 import argparse
