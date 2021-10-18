@@ -35,7 +35,14 @@ def urlbuilder(url, port, ssl):
     if ssl or port == 443:
         scheme = "https"
 
-    urlbuilder = "{}://{}:{}".format(scheme, url, port)
+    if "/" in url:
+        fqdn = url.split("/", 1)[0]
+        path = url.split("/", 1)[1]
+    else:
+        fqdn = url
+        path = ""
+
+    urlbuilder = "{}://{}:{}/{}".format(scheme, fqdn, port, path)
 
     timedprint("Using built url {}".format(urlbuilder))
 
