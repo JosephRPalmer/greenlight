@@ -4,7 +4,7 @@ signalman takes an endpoint and either a http code and/or a response text elemen
 """
 
 __author__ = "Joseph Ryan-Palmer"
-__version__ = "0.1.15"
+__version__ = "0.1.16"
 __license__ = "MIT"
 
 import argparse
@@ -34,6 +34,12 @@ def urlbuilder(url, port, ssl):
 
     if ssl or port == 443:
         scheme = "https"
+
+    if "://" in str(url):
+        schema_array = url.split("://", 1)
+        url = schema_array[1]
+        timedprint(
+            "Detected '{}://'. Removing protocol scheme and rebuilding URL.".format(schema_array[0]))
 
     if "/" in url:
         fqdn = url.split("/", 1)[0]
