@@ -68,6 +68,20 @@ def caller(url, return_type, return_value, headers):
             raise ResponseError()
         else:
             print("Response text conditions met, found {} in response text".format(text))
+    elif return_type == "json":
+        json_key = return_value.split(":", 1)[0]
+        json_value = return_value.split(":", 1)[1]
+
+        if json_key in resp.json():
+            if str(resp.json()[json_key]) == str(json_value):
+                print("Response JSON contains matching key and value.")
+            else:
+                print("Response JSON contains matching key but wrong value. Value found is {}, looking for {}.".format(
+                    str(resp.json()[json_key]), str(json_value)))
+                raise ResponseError()
+        else:
+            print("Response key/value pair not matched. Retrying...")
+            raise ResponseError()
 
 
 def header_format(headers):
