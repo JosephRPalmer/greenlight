@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="signalman",
-    version="0.1.16",
+    version="0.1.17",
     author="Joseph Ryan-Palmer",
     author_email="joseph@ryan-palmer.com",
     description="A small application to poll for response code or text",

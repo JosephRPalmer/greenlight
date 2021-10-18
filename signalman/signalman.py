@@ -4,11 +4,12 @@ signalman takes an endpoint and either a http code and/or a response text elemen
 """
 
 __author__ = "Joseph Ryan-Palmer"
-__version__ = "0.1.16"
+__version__ = "0.1.17"
 __license__ = "MIT"
 
 import argparse
 import requests
+import sys
 import time
 
 from interruptingcow import timeout
@@ -31,9 +32,12 @@ def timedprint(message):
 
 def urlbuilder(url, port, ssl):
     scheme = "http"
+    colon = ":"
 
     if ssl or port == 443:
         scheme = "https"
+    elif not port:
+        port = "80"
 
     if "://" in str(url):
         schema_array = url.split("://", 1)
@@ -48,7 +52,12 @@ def urlbuilder(url, port, ssl):
         fqdn = url
         path = ""
 
-    urlbuilder = "{}://{}:{}/{}".format(scheme, fqdn, port, path)
+    if ":" in fqdn:
+        colon = ""
+        port = ""
+        timedprint("Ignoring --port directive as port found in URL")
+
+    urlbuilder = "{}://{}{}{}/{}".format(scheme, fqdn, colon, port, path)
 
     timedprint("Using built url {}".format(urlbuilder))
 
@@ -56,9 +65,14 @@ def urlbuilder(url, port, ssl):
 
 
 @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
-def caller(url, return_type, return_value, headers):
+def caller(url, return_type, return_value, headers, debug):
 
     resp = requests.get(url, headers=headers)
+
+    if debug:
+        timedprint("Sent: {}".format(resp.request.headers))
+        timedprint("Recieved: Headers:{} Body:{}".format(
+            resp.headers, str(resp.content)))
 
     if return_type == "code":
         if int(resp.status_code) != int(return_value):
@@ -81,7 +95,8 @@ def caller(url, return_type, return_value, headers):
 
         if json_key in resp.json():
             if str(resp.json()[json_key]) == str(json_value):
-                timedprint("Response JSON contains matching key and value.")
+                timedprint("Response JSON contains matching key and value. Found '{}:{}'".format(
+                    json_key, resp.json()[json_key]))
             else:
                 timedprint("Response JSON contains matching key but wrong value. Value found is {}, looking for {}.".format(
                     str(resp.json()[json_key]), str(json_value)))
@@ -92,17 +107,24 @@ def caller(url, return_type, return_value, headers):
 
 
 def header_format(headers):
-    headerlist = headers.split(" ")
+
+    headerlist = []
+
+    if " " in str(headers):
+        headerlist = headers.split(" ")
+    else:
+        headerlist = headers
 
     outputheaders = {}
 
     for header in headerlist:
-        if header.count(".") != 2:
+        if header.count(":") < 1:
             print("Header with detail {} was skipped due to incompatible formatting".format(
-                header.split(".")[1]))
+                header))
             continue
-        templist = header.split(".")
-        outputheaders[templist[1]] = templist[2]
+        templist = header.split(":")
+        outputheaders[templist[0]] = templist[1]
+        timedprint("Adding header '{}:{}'".format(templist[0], templist[1]))
 
     return outputheaders
 
@@ -115,7 +137,7 @@ def main():
 
     parser.add_argument("--endpoint", type=str,
                         help='Endpoint to poll', required=True)
-    parser.add_argument("--port", type=int, help='Port to poll', required=True)
+    parser.add_argument("--port", type=int, help='Port to poll')
 
     parser.add_argument(
         "--r-type", type=str, help='Set a return type for signalman to look for, choose from text, code and json',
@@ -125,10 +147,12 @@ def main():
                         help='Set a return value for signalman to look for', required=True)
 
     parser.add_argument("--headers", type=str, nargs='+',
-                        help='Set request headers to use, for example to request Content-Type: application/json use h.content-type:application/json')
+                        help='Set request headers to use, for example to request Content-Type: application/json use content-type:application/json')
 
     parser.add_argument('--ssl', action='store_true',
                         help="Use to poll with https enabled")
+    parser.add_argument('--debug', action='store_true',
+                        help="Use to enable debugging")
 
     # Specify output of "--version"
     parser.add_argument(
@@ -146,9 +170,10 @@ def main():
     try:
         with timeout(args.timeout*60, exception=TimeoutError):
             caller(urlbuilder(args.endpoint, args.port, args.ssl), args.r_type,
-                   args.r_value, headers)
+                   args.r_value, headers, args.debug)
     except TimeoutError:
         print("signalman timed out")
+        sys.exit(1)
 
 
 if __name__ == '__main__':

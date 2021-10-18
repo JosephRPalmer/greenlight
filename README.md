@@ -12,8 +12,9 @@ A small application to poll a remote endpoint for response code or text.
 | ----------- | ----------- |
 | --timeout | Timeout for Signalman in minutes |
 | --endpoint | URL to test against |
-| --port | Port to test against |
+| --port (optional) | Port to test against |
 | --r-type | Return type you are expecting, choose from text, json or code |
 | --r-value | Return value of type selected as --r-type, if using `json` then use the format key:value, currently only a single key pair is supported |
 | --ssl (optional) | Use SSL/TLS |
-| --headers (optional) | Any headers which need to be included - for example to request Content-Type: application/json use h.content-type:application/json |
+| --headers (optional) | Any headers which need to be included - for example to request Content-Type: application/json use `Content-Type:application/json` |
+| --debug (optional) | Print request and response headers and response body
