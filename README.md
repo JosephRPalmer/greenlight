@@ -1,14 +1,15 @@
 # signalman
-A small application to poll a remote endpoint for response code or text
+A small application to poll a remote endpoint for response code or text.
 
 ## How to use signalman
 
-`signalman --timeout 60 --endpoint google.com --port 80 --rc 200` will run a test for 60 minutes until google.com returns a HTTP 200 on port 80 
+`signalman --timeout 60 --endpoint google.com --port 80 --rc 200` will run a test for 60 minutes until google.com returns a HTTP 200 on port 80
 
 
 ## Parameter List
 
 | Syntax | Description |
+| ----------- | ----------- |
 | --timeout | Timeout for Signalman in minutes |
 | --endpoint | URL to test against |
 | --port | Port to test against |
