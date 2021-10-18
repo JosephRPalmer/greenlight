@@ -50,21 +50,20 @@ def urlbuilder(url, port, ssl):
 
 
 @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
-def caller(url, code: int, text, headers):
+def caller(url, return_type, return_value, headers):
 
     resp = requests.get(url, headers=headers)
 
-    if code is not None:
-        if int(resp.status_code) != int(code):
+    if return_type == "code":
+        if int(resp.status_code) != int(return_value):
             timedprint("Response code was {}, looking for {}".format(
                 resp.status_code, code))
             raise ResponseError()
         else:
             timedprint("Response code conditions met, found {}".format(
                 resp.status_code))
-
-    if text is not None:
-        if text not in resp.text:
+    elif return_type == "text":
+        if return_value not in resp.text:
             print("Response text did not contain {}".format(text))
             raise ResponseError()
         else:
@@ -98,10 +97,11 @@ def main():
     parser.add_argument("--port", type=int, help='Port to poll', required=True)
 
     parser.add_argument(
-        "--rc", type=str, help='Set a return code for signalman to look for')
+        "--r-type", type=str, help='Set a return type for signalman to look for, choose from text, code and json',
+        choices=["json", "code", "text"], required=True)
 
-    parser.add_argument("--rtext", type=str,
-                        help='Set a return string for signalman to look for')
+    parser.add_argument("--r-value", type=str,
+                        help='Set a return value for signalman to look for', required=True)
 
     parser.add_argument("--headers", type=str, nargs='+',
                         help='Set request headers to use, for example to request Content-Type: application/json use h.content-type:application/json')
@@ -117,10 +117,6 @@ def main():
 
     args = parser.parse_args()
 
-    if args.rc is None and args.rtext is None:
-        parser.error(
-            'Please specify one or both of --rc or --rtext')
-
     headers = {}
 
     if args.headers:
@@ -128,8 +124,8 @@ def main():
 
     try:
         with timeout(args.timeout*60, exception=TimeoutError):
-            caller(urlbuilder(args.endpoint, args.port, args.ssl), args.rc,
-                   args.rtext, headers)
+            caller(urlbuilder(args.endpoint, args.port, args.ssl), args.r_type,
+                   args.r_value, headers)
     except TimeoutError:
         print("signalman timed out")
 
